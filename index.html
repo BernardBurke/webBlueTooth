@@ -1,0 +1,41 @@
+<form>
+    <button>Connect with BLE</button>
+</form>
+
+<script>
+    var DeviceName='BLE-RTCclock'
+    function isWebBLEAvailable() {
+        if (!navigator.bluetooth) {
+            console.log("Not available")
+        }
+
+        return true
+    }
+
+    function getDeviceInfo() {
+        let options = {
+            filters: [
+              { name: DeviceName }    
+            ]
+        }
+
+        console.log('requesting BLE device information..')
+        navigator.bluetooth.requestDevice(options).then(device => {
+            console.log('Name: ', device.name)
+        }).catch(error => {
+            console.log('Requested Device error: ', error)
+        })
+            
+    }
+
+    document.querySelector('form').addEventListener('submit',
+    function(event) {
+        event.stopPropagation()
+        event.preventDefault()
+
+        if (isWebBLEAvailable()) {
+            getDeviceInfo()
+        }
+    })
+
+</script>
