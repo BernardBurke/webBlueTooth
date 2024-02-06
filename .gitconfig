@@ -1,0 +1,6 @@
+[user]
+  email = ben@fishburners.org
+  name = "Ben Burke"
+
+[url "github.com-examin"] 
+  insteadOf = git@github.com
