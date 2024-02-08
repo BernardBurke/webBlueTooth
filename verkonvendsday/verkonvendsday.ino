@@ -11,17 +11,23 @@
 // to write out the whole string in each characteristic:
 #define MY_UUID(val) ("555a0002-" val "-467a-9538-01f0652c74e8")
 
+uint8_t heartrateindexvalue = 0x0;
+#define UUID16_SVC_GENERIC_HEALTH_SENSOR 0x1840
+#define UUID16_CHR_HEART_RATE_MEASUREMENT 0x2A37
+
 // fill in your name here. It will be combined with
 // the Arduino's MAC address to set the peripheral BLE name:
 const char myName[] = "Examin-Handset";
 
 // BB replace the set up the service and the characteristics:
 // BLEService                     service                 (MY_UUID("0000"));
-BLEService                        service                 ("ba65b745-f9f7-4873-9289-bb93564909f3");
+//BLEService                        service                 ("ba65b745-f9f7-4873-9289-bb93564909f3");
+BLEService                        generic_health_care        (UUID16_SVC_GENERIC_HEALTH_SENSOR);
+
 // Will make all the characteristics Int for now
 //BLEUnsignedLongCharacteristic  epochCharacteristic     (MY_UUID("0001"), BLERead | BLEWrite | BLENotify);
 //BLEIntCharacteristic           timeZoneCharacteristic  (MY_UUID("0002"), BLERead | BLEWrite | BLENotify);
-BLEIntCharacteristic             HeartRateOxygen   ("f87ef99e-a101-4518-958b-4def53dc4b8e", BLERead | BLEWrite | BLENotify ); // HR, Oxygen
+BLEIntCharacteristic             heartratemeasurement   (UUID16_CHR_HEART_RATE_MEASUREMENT, BLERead | BLEWrite | BLENotify ); // HR, Oxygen
 //BLEIntCharacteristic             TMP_CHARACTERISTIC_UUID     ("38bca6e3-05a4-487d-95b0-351a3e25eae1");   // temp, Hand Temp
 //BLEIntCharacteristic             MEAS_CHARACTERISTIC_UUID    ("10762b73-87ad-4368-b9b9-a2ab27cfaad7");    // vir_init, vir_1, vir_2, vir3
 //BLEIntCharacteristic             PRES_CHARACTERISTIC_UUID     ("2f63d787-50dc-42e6-ace0-a403958a02b6"); // pressure
