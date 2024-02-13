@@ -21,8 +21,8 @@ const char myName[] = "Examin-Handset";
 
 // BB replace the set up the service and the characteristics:
 // BLEService                     service                 (MY_UUID("0000"));
-//BLEService                        service                 ("ba65b745-f9f7-4873-9289-bb93564909f3");
-BLEService                        generic_health_care        (UUID16_SVC_GENERIC_HEALTH_SENSOR);
+BLEService                        service                 ("ba65b745-f9f7-4873-9289-bb93564909f3");
+//BLEService                        generic_health_care        (UUID16_SVC_GENERIC_HEALTH_SENSOR);
 
 // Will make all the characteristics Int for now
 //BLEUnsignedLongCharacteristic  epochCharacteristic     (MY_UUID("0001"), BLERead | BLEWrite | BLENotify);
