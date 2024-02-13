@@ -9,15 +9,17 @@
 // this define is a macro. It says "take whatever is in parentheses
 // and add it in the middle of this string. This way you don't have
 // to write out the whole string in each characteristic:
-#define MY_UUID(val) ("555a0002-" val "-467a-9538-01f0652c74e8");
+#define MY_UUID(val) ("555a0002-" val "-467a-9538-01f0652c74e8")
+#define UUID16_SVC_GENERIC_HEALTH_SENSOR 0x1840
+//uint8_t UUID16_SVC_GENERIC_HEALTH_SENSOR = 0x1840;
 
 // fill in your name here. It will be combined with
 // the Arduino's MAC address to set the peripheral BLE name:
 const char myName[] = "Examin-Handset";
 
 // BB replace the set up the service and the characteristics:
-// BLEService                     service                 (MY_UUID("0000"));
-BLEService                        service                 ("ba65b745-f9f7-4873-9289-bb93564909f3");
+//BLEService                     service                 (MY_UUID("0000"));
+BLEService                        service                 ("UUID16_SVC_GENERIC_HEALTH_SENSOR");
 // Will make all the characteristics Int for now
 //BLEUnsignedLongCharacteristic  epochCharacteristic     (MY_UUID("0001"), BLERead | BLEWrite | BLENotify);
 //BLEIntCharacteristic           timeZoneCharacteristic  (MY_UUID("0002"), BLERead | BLEWrite | BLENotify);
