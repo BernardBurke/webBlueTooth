@@ -9,7 +9,7 @@
 // this define is a macro. It says "take whatever is in parentheses
 // and add it in the middle of this string. This way you don't have
 // to write out the whole string in each characteristic:
-#define MY_UUID(val) ("555a0002-" val "-467a-9538-01f0652c74e8");
+#define MY_UUID(val) ("555a0002-" val "-467a-9538-01f0652c74e8")
 
 uint8_t heartrateindexvalue = 0x0;
 #define UUID16_SVC_GENERIC_HEALTH_SENSOR 0x1840
