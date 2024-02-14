@@ -11,6 +11,7 @@
 // to write out the whole string in each characteristic:
 #define MY_UUID(val) ("555a0002-" val "-467a-9538-01f0652c74e8")
 #define UUID16_SVC_GENERIC_HEALTH_SENSOR 0x1840
+#define UUID16_SVC_ENVIRONMENTAL_SENSING 0x181A
 //uint8_t UUID16_SVC_GENERIC_HEALTH_SENSOR = 0x1840;
 
 // fill in your name here. It will be combined with
@@ -18,8 +19,9 @@
 const char myName[] = "Examin-Handset";
 
 // BB replace the set up the service and the characteristics:
-//BLEService                     service                 (MY_UUID("0000"));
-BLEService                        service                 ("UUID16_SVC_GENERIC_HEALTH_SENSOR");
+BLEService                     service                 (MY_UUID("0000"));
+//BLEService                        service                 ("UUID16_SVC_GENERIC_HEALTH_SENSOR");
+//BLEService                        service                 ("UUID16_SVC_ENVIRONMENTAL_SENSING");
 // Will make all the characteristics Int for now
 //BLEUnsignedLongCharacteristic  epochCharacteristic     (MY_UUID("0001"), BLERead | BLEWrite | BLENotify);
 //BLEIntCharacteristic           timeZoneCharacteristic  (MY_UUID("0002"), BLERead | BLEWrite | BLENotify);
@@ -44,6 +46,8 @@ void setup() {
   //rtc.begin();
 
   // start the BLE radio:
+  Serial.println(MY_UUID("0000"));
+  Serial.println("That was my UUID");
   if (!BLE.begin()) {
     Serial.println("Failed to start BLE");
   }
