@@ -24,9 +24,7 @@ BLEService ledService("19B10010-E8F2-537E-4F6C-D104768A1214"); // create service
 // create button characteristic and allow remote device to get notifications
 BLEIntCharacteristic buttonCharacteristic("19B10012-E8F2-537E-4F6C-D104768A1214", BLERead | BLENotify);
 
-int sensorValue = 0;
-int sensorPin = A0;    // select the input pin for the potentiometer
-
+int sensorValue = 255;
 void setup() {
   Serial.begin(9600);
   while (!Serial);
@@ -66,20 +64,15 @@ void loop() {
   // poll for BLE events
   BLE.poll();
 
-  // read the value from the sensor:
-  sensorValue = analogRead(sensorPin);
-  Serial.println(sensorValue/4);
-  buttonCharacteristic.writeValue(sensorValue/4);
-  
-//  if (millis() % 1000 == 0) {
-//
-//    sensorValue --;
-//    if (sensorValue < 0) {
-//      sensorValue = 255;
-//    }
-//    Serial.println(sensorValue);
-//    buttonCharacteristic.writeValue(sensorValue);
-//
-//  }
+  if (millis() % 1000 == 0) {
+
+    sensorValue --;
+    if (sensorValue < 0) {
+      sensorValue = 255;
+    }
+    Serial.println(sensorValue);
+    buttonCharacteristic.writeValue(sensorValue);
+
+  }
 
 }
