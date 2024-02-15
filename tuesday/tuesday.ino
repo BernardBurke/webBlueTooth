@@ -19,7 +19,7 @@
 const char myName[] = "Examin-Handset";
 
 // BB replace the set up the service and the characteristics:
-BLEService                     service                 (MY_UUID("0000"));
+BLEService                     confidence_service                 (MY_UUID("0000"));
 //BLEService                        service                 ("UUID16_SVC_GENERIC_HEALTH_SENSOR");
 //BLEService                        service                 ("UUID16_SVC_ENVIRONMENTAL_SENSING");
 // Will make all the characteristics Int for now
@@ -55,9 +55,9 @@ void setup() {
   BLE.setLocalName(myName);
 
   // set the advertised service:
-  BLE.setAdvertisedService(service);
+  BLE.setAdvertisedService(confidence_service);
   // add the characteristics:
-  service.addCharacteristic(HeartRateOxygen);
+  confidence_service.addCharacteristic(HeartRateOxygen);
   //service.addCharacteristic(TMP_CHARACTERISTIC_UUID);
   
   // set initial values for the characteristics:
@@ -66,7 +66,7 @@ void setup() {
   //TMP_CHARACTERISTIC_UUID.writeValue(11);
 
   // add the service to the peripheral and advertise it:
-  BLE.addService(service);
+  BLE.addService(confidence_service);
   BLE.advertise();
   
   randomSeed(analogRead(0));
