@@ -3,11 +3,11 @@
 <button id="stop" disabled>Stop</button>
 
 <script>
-  var deviceName = 'Examin-Handset'
+  var deviceName = 'confidence_tests'
   //var bleService = 'ba65b745-f9f7-4873-9289-bb93564909f3'
   //var bleService = 'environmental_sensing'
-  bleService = '555a0002-0000-467a-9538-01f0652c74e8' 
-  var bleCharacteristic = 'f87ef99e-a101-4518-958b-4def53dc4b8e'
+  bleService = '555a0002-0000-467a-9538-01f0652c74ef' 
+  var bleCharacteristic = '555a0002-0001-467a-9538-01f0652c74ef'
   var bluetoothDeviceDetected
   var gattCharacteristic
 
@@ -52,7 +52,7 @@
     return (bluetoothDeviceDetected ? Promise.resolve() : getDeviceInfo())
     .then(connectGATT)
     .then(_ => {
-      console.log('Reading Heart Rate...')
+      console.log('Reading Characteristic...')
       return gattCharacteristic.readValue()
     })
     .catch(error => {
@@ -86,7 +86,7 @@
   function handleChangedValue(event) {
     let value = event.target.value.getUint8(0)
     var now = new Date()
-    console.log('> ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ' Heart Rate is ' + value)
+    console.log('> ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ' Characteristic is ' + value)
   }
 
   function start() {

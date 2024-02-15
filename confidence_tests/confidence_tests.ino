@@ -1,12 +1,11 @@
 /*
+   Examin ArduioBLE-->WebBluetooth confidence created 6 Feb 2024
+   
    BLE & RTC Combination
 
-   This example creates a BLE clock. The time can be set
-   by sending the Unix epoch to the peripheral, or read
-   by reading it. The timezone can be set or read as well
-
-   created 12 Mar 2021
-   by Tom Igoe
+   created 15-Feb-2024
+   
+   Credit to: Tom Igoe and Sayanee Basu for their example code
 */
 #include <ArduinoBLE.h>
 #include <RTCZero.h>
