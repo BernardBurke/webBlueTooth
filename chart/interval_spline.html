@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</head>
+<body>
+    <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+    <script>
+        window.onload = function () {
+            var data1 = [];
+            var data2 = [];
+
+            var chart = new CanvasJS.Chart("chartContainer", {
+                title: {
+                    text: "Real Time Random Data Chart"
+                },
+                data: [{
+                    type: "spline",
+                    dataPoints: data1
+                },
+                {
+                    type: "spline",
+                    dataPoints: data2
+                }]
+            });
+
+            setInterval(function() {
+                data1.push({ y: Math.random() * 100 });
+                data2.push({ y: Math.random() * 100 });
+                chart.render();
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

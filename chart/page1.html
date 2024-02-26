@@ -1,0 +1,13 @@
+<html lang="en">
+    <body>
+        <button id="start" >Start</button>
+        <button id="stop" >Stop</button>
+        <button id="connect" onclick="enumerate('looping_values')">Connect and do stuff</button>
+        <!-- Add a button that calls the draw_chart function in draw_chart.js and displays it in this page -->
+        <!-- create a div for the chart -->
+        <div id="chart_div" style="width: 900px; height: 500px;"></div>
+        <button id="draw_chart" onclick="draw_chart('chart_div', [1, 2, 3, 4], [10, 20, 30, 40])">Draw Chart</button>
+        <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+        <script src="draw_chart.js"></script>
+    </body>
+</html>
