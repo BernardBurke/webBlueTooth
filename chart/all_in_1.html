@@ -1,0 +1,225 @@
+<!-- This page uses the web bluetooth library an the canvajs library to 
+Connect to a bluetooth low energy device, connect to GATT, and read all the GATT characteristics 
+These characteristics are then plotted over time on a Canvajs chart -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Web Bluetooth API Example</title>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</head>
+<body>
+    <h1>Web Bluetooth API Example</h1>
+    <button id="connect">Connect</button>
+    <button id="disconnect">Disconnect</button>
+    <canvas id="chart" width="400" height="400"></canvas>
+    <script>
+        document.getElementById('connect').addEventListener('click', function() {
+            navigator.bluetooth.requestDevice({
+                acceptAllDevices: true
+            })
+            .then(device => {
+                console.log('Got device:', device);
+                return device.gatt.connect();
+            })
+            .then(server => {
+                console.log('Got server:', server);
+                return server.getPrimaryServices();
+            })
+            .then(services => {
+                console.log('Got services:', services);
+                return Promise.all(services.map(service => service.getCharacteristics()));
+            })
+            .then(characteristics => {
+                console.log('Got characteristics:', characteristics);
+                return Promise.all(characteristics.flat().map(characteristic => characteristic.readValue()));
+            })
+            .then(values => {
+                console.log('Got values:', values);
+                return values.map(value => new TextDecoder().decode(value));
+            })
+            .then(decodedValues => {
+                console.log('Decoded values:', decodedValues);
+                return decodedValues;
+            })
+            .catch(error => {
+                console.log('Error:', error);
+            });
+        });
+
+        document.getElementById('disconnect').addEventListener('click', function() {
+            console.log('Disconnecting');
+            navigator.bluetooth.getDevices().then(devices => {
+                devices.forEach(device => {
+                    console.log('Disconnecting from device:', device);
+                    device.gatt.disconnect();
+                });
+            });
+        });
+
+        var chart = new CanvasJS.Chart("chart", {
+            animationEnabled: true,
+            title: {
+                text: "Web Bluetooth API Example"
+            },
+            axisX: {
+                title: "Time",
+                type: "linear",
+                interval: 1
+            },
+            axisY: {
+                title: "Value",
+                includeZero: true,
+                maximum: 100
+            },
+            data: []
+        });
+
+        document.getElementById('connect').addEventListener('click', function() {
+            navigator.bluetooth.requestDevice({
+                acceptAllDevices: true
+            })
+            .then(device => {
+                console.log('Got device:', device);
+                return device.gatt.connect();
+            })
+            .then(server => {
+                console.log('Got server:', server);
+                return server.getPrimaryServices();
+            })
+            .then(services => {
+                console.log('Got services:', services);
+                return Promise.all(services.map(service => service.getCharacteristics()));
+            })
+            .then(characteristics => {
+                console.log('Got characteristics:', characteristics);
+                characteristics.forEach(serviceCharacteristics => {
+                    serviceCharacteristics.forEach(characteristic => {
+                        var label = characteristic.uuid;
+                        var dataPoints = [];
+                        var dataset = {
+                            type: "line",
+                            showInLegend: true,
+                            name: label,
+                            dataPoints: dataPoints
+                        };
+                        chart.options.data.push(dataset);
+                    });
+                });
+                chart.render();
+                return Promise.all(characteristics.flat().map(characteristic => characteristic.readValue()));
+            })
+            .then(values => {
+                console.log('Got values:', values);
+                values.forEach((value, index) => {
+                    var decodedValue = new TextDecoder().decode(value);
+                    chart.options.data[index].dataPoints.push({ x: index, y: decodedValue });
+                });
+                chart.render();
+            })
+            .catch(error => {
+                console.log('Error:', error);
+            });
+        });
+
+        document.getElementById('disconnect').addEventListener('click', function() {
+            console.log('Disconnecting');
+            navigator.bluetooth.getDevices().then(devices => {
+                devices.forEach(device => {
+                    console.log('Disconnecting from device:', device);
+                    device.gatt.disconnect();
+                });
+            });
+        });
+
+        document.getElementById('connect').addEventListener('click', function() {
+            navigator.bluetooth.requestDevice({
+                acceptAllDevices: true
+            })
+            .then(device => {
+                console.log('Got device:', device);
+                return device.gatt.connect();
+            })
+            .then(server => {
+                console.log('Got server:', server);
+                return server.getPrimaryServices();
+            })
+            .then(services => {
+                console.log('Got services:', services);
+                return Promise.all(services.map(service => service.getCharacteristics()));
+            })
+            .then(characteristics => {
+                console.log('Got characteristics:', characteristics);
+                characteristics.forEach(serviceCharacteristics => {
+                    serviceCharacteristics.forEach(characteristic => {
+                        var label = characteristic.uuid;
+                        var dataset = {
+                            label: label,
+                            data: [],
+                            backgroundColor: 'rgba(0, 0, 255, 0.5)',
+                            borderColor: 'rgba(0, 0, 255, 1)',
+                            borderWidth: 1
+                        };
+                        chart.data.datasets.push(dataset);
+                    });
+                });
+                chart.update();
+                return Promise.all(characteristics.flat().map(characteristic => characteristic.readValue()));
+            })
+            .then(values => {
+                console.log('Got values:', values);
+                values.forEach((value, index) => {
+                    var decodedValue = new TextDecoder().decode(value);
+                    chart.data.datasets[index].data.push(decodedValue);
+                });
+                chart.update();
+                return values.map(value => new TextDecoder().decode(value));
+            })
+            .then(decodedValues => {
+                console.log('Decoded values:', decodedValues);
+                return decodedValues;
+            })
+            .catch(error => {
+                console.log('Error:', error);
+            });
+        });
+
+        document.getElementById('disconnect').addEventListener('click', function() {
+            console.log('Disconnecting');
+            navigator.bluetooth.getDevices().then(devices => {
+                devices.forEach(device => {
+                    console.log('Disconnecting from device:', device);
+                    device.gatt.disconnect();
+                });
+            });
+        });
+
+        var lastTime = null;
+        var lastValue = null;
+        var lastUpdate = null;
+
+        function updateChart() {
+            var now = new Date();
+            if (lastTime) {
+                var timeDiff = now - lastTime;
+                var valueDiff = Math.random() * 10 - 5;
+                var newValue = lastValue + valueDiff;
+                if (newValue < 0) {
+                    newValue = 0;
+                }
+                if (newValue > 100) {
+                    newValue = 100;
+                }
+                chart.data.labels.push(now);
+                chart.data.datasets[0].data.push(newValue);
+                chart.update();
+                lastTime = now;
+                lastValue = newValue;
+            } else {
+                lastTime = now;
+                lastValue = 50;
+            }
+            lastUpdate = setTimeout(updateChart, 1000);
+        }
+        </script>
+        </body>
+</html>
