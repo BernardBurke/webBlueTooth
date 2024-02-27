@@ -15,7 +15,7 @@ These characteristics are then plotted over time on a Canvajs chart -->
     <script>
         document.getElementById('connect').addEventListener('click', function() {
             navigator.bluetooth.requestDevice({
-                acceptAllDevices: true
+                filters: [{ name: 'looping_values' }],            
             })
             .then(device => {
                 console.log('Got device:', device);
