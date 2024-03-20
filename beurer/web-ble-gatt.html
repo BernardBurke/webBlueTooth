@@ -82,9 +82,13 @@
   }
 
   function handleChangedValue(event) {
-    let value = event.target.value.getUint8(0)
+    let value = event.target.value
+    value = value.buffer ? value : new DataView(value);
     var now = new Date()
-    console.log('> ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ' UV Index is ' + value)
+    // the next line prints the contents of the DataView to the console
+    console.log(new Uint8Array(value.buffer))
+
+    console.log('> ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ' Value is ' + value)
   }
 
   function start() {
