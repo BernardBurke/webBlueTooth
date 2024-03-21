@@ -10,6 +10,7 @@
   var bleDoorbell = 0xff01
   var bluetoothDeviceDetected
   var gattCharacteristic
+  var gattWriteableCharacteristic
 
   document.querySelector('#read').addEventListener('click', function() {
     if (isWebBluetoothEnabled()) { read() }
@@ -88,6 +89,25 @@
     
   }
 
+  function connectWriteableGATT() {
+
+    return bluetoothDeviceDetected.gatt.connect()
+    .then(server => {
+      console.log('Getting GATT Service...')
+      return server.getPrimaryService(bleService)
+    })
+    .then(service => {
+      console.log('Getting GATT Writeable Characteristic...')
+      return service.getCharacteristic(bleDoorbell)
+    })
+    .then(characteristic => {
+      gattWriteableCharacteristic = characteristic
+      // document.querySelector('#start').disabled = false
+      // document.querySelector('#stop').disabled = true
+    })
+    
+  }
+
   // This function converts a binary value to a string
   
   
@@ -130,13 +150,18 @@
   }
 
   function doorbell() {
-    const doorbell = Uint8Array.of(1);
     console.log ('Doorbell ringing...');
-    return gattWriteableCharacteristic.writeValue(doorbell).then(result => {
-      console.log('Doorbell rung...')
-    }).catch(error => { 
-      console.log('Doorbell error: ' + error) 
+    return (bluetoothDeviceDetected ? Promise.resolve() : getDeviceInfo())
+    .then(connectWriteableGATT)
+    .then(_ => {
+      console.log('Writing gattWriteableCharacteristic ...') 
+      const doorbell = new Uint8Array([0x99, 0x00, 0x19]).buffer;
+      gattWriteableCharacteristic.writeValue(doorbell)
     })
+    .catch(error => {
+      console.log('Error writing to gattWriteableCharacteristic: ' + error)
+    })
+    // const doorbell = Uint8Array.of(1);
   }
   
 </script>
