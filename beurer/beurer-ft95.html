@@ -29,6 +29,32 @@
     if (isWebBluetoothEnabled()) { doorbell() }
   })
 
+
+  function calculateValue(bytes) {
+    if (bytes.length !== 4) {
+      throw new Error('Input must be an array of 4 bytes');
+    }
+
+    // The first byte is the exponent
+    let exponent = 256 - bytes[0];
+
+    // The remaining bytes form the mantissa
+    let mantissa = (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
+
+    // Calculate the value
+    let value = mantissa * Math.pow(2, -exponent);
+
+    return value;
+  }
+
+  // let decimalBytes = [255, 0, 1, 107];
+  // let hexBytes = decimalBytes.map(byte => byte.toString(16));
+  // console.log(hexBytes);
+  // let result = calculateValue(hexBytes);
+
+  // console.log(result);
+
+
   function isWebBluetoothEnabled() {
     if (!navigator.bluetooth) {
       console.log('Web Bluetooth API is not available in this browser!')
@@ -116,8 +142,32 @@
     value = value.buffer ? value : new DataView(value);
     var now = new Date()
     // the next line prints the contents of the DataView to the console
-    console.log('Arg')    
-    console.log(new Uint8Array(value.buffer))
+    console.log('casting bytes')
+    // set a variable to the first byte of the DataView
+    let byte1 = value.getUint8(1)
+    let byte2 = value.getUint8(2)
+    let byte3 = value.getUint8(3)
+    let byte4 = value.getUint8(4)
+    let decimalBytes = [byte1, byte2, byte3, byte4]
+    let hexBytes = decimalBytes.map(byte => byte.toString(16));
+    console.log(hexBytes);
+    // swap the order of the hex bytes
+    let swappedBytes = [hexBytes[1], hexBytes[0]]
+    hexWord = swappedBytes.join('')
+    //caste the hex word to a decimal
+    finalPlane = parseInt(hexWord, 16)
+    //divide finalPlane by 10 and parse to a float
+    finalPlane = finalPlane / 10
+    
+    console.log(finalPlane)
+
+
+
+    //let result = calculateValue(swappedBytes);
+    console.log(swappedBytes);
+    // print the values of the DataView has hexidecimal
+    //console.log(new Uint8Array(value.buffer).toString(16))   
+    //console.log(new Uint8Array(value.buffer).toString(16))
     // document.querySelector('#doorbell').disabled = false
     // let decoder = new TextDecoder();
     // console.log('Characteristic binary: ' + decoder.decode(value.toString()))
