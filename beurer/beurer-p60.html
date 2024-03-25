@@ -1,0 +1,167 @@
+<button id="read">Connect with BLE device</button>
+<button id="start" disabled>Start</button>
+<button id="stop" disabled>Stop</button>
+<button id="doorbell" disabled>Ring Doorbell</button>
+
+<script>
+  var deviceName = 'PO60'
+  var bleService = '0000ff12-0000-1000-8000-00805f9b34fb'
+  var bleCharacteristic = 0xff02
+  var bleDoorbell = 0xff01
+  var bluetoothDeviceDetected
+  var gattCharacteristic
+  var gattWriteableCharacteristic
+
+  document.querySelector('#read').addEventListener('click', function() {
+    if (isWebBluetoothEnabled()) { read() }
+  })
+
+  document.querySelector('#start').addEventListener('click', function(event) {
+    if (isWebBluetoothEnabled()) { start() }
+  })
+
+  document.querySelector('#stop').addEventListener('click', function(event) {
+    if (isWebBluetoothEnabled()) { stop() }
+  })
+
+  document.querySelector('#doorbell').addEventListener('click', function(event) {
+    if (isWebBluetoothEnabled()) { doorbell() }
+  })
+
+  function isWebBluetoothEnabled() {
+    if (!navigator.bluetooth) {
+      console.log('Web Bluetooth API is not available in this browser!')
+      return false
+    }
+
+    return true
+  }
+
+  function getDeviceInfo() {
+    let options = {
+      optionalServices: [bleService],
+      filters: [
+        { "name": deviceName }
+      ]
+    }
+
+    console.log('Requesting any Bluetooth Device...')
+    return navigator.bluetooth.requestDevice(options).then(device => {
+      bluetoothDeviceDetected = device
+    }).catch(error => {
+      console.log('Argh! ' + error)
+    })
+  }
+
+  function read() {
+    return (bluetoothDeviceDetected ? Promise.resolve() : getDeviceInfo())
+    .then(connectGATT)
+    .then(_ => {
+      console.log('PO60...')
+      return gattCharacteristic.readValue()
+    })
+    .catch(error => {
+      console.log('Waiting to start reading: ' + error)
+    })
+  }
+
+  function connectGATT() {
+    if (bluetoothDeviceDetected.gatt.connected && gattCharacteristic) {
+      return Promise.resolve()
+    }
+
+    return bluetoothDeviceDetected.gatt.connect()
+    .then(server => {
+      console.log('Getting GATT Service...')
+      return server.getPrimaryService(bleService)
+    })
+    .then(service => {
+      console.log('Getting GATT Characteristic...')
+      return service.getCharacteristic(bleCharacteristic)
+    })
+    .then(characteristic => {
+      gattCharacteristic = characteristic
+      gattCharacteristic.addEventListener('characteristicvaluechanged',
+          handleChangedValue)
+      document.querySelector('#start').disabled = false
+      document.querySelector('#stop').disabled = true
+    })
+    
+  }
+
+  function connectWriteableGATT() {
+
+    return bluetoothDeviceDetected.gatt.connect()
+    .then(server => {
+      console.log('Getting GATT Service...')
+      return server.getPrimaryService(bleService)
+    })
+    .then(service => {
+      console.log('Getting GATT Writeable Characteristic...')
+      return service.getCharacteristic(bleDoorbell)
+    })
+    .then(characteristic => {
+      gattWriteableCharacteristic = characteristic
+      // document.querySelector('#start').disabled = false
+      // document.querySelector('#stop').disabled = true
+    })
+    
+  }
+
+  // This function converts a binary value to a string
+  
+  
+  function handleChangedValue(event) {
+    let value = event.target.value
+    value = value.buffer ? value : new DataView(value);
+    var now = new Date()
+    // the next line prints the contents of the DataView to the console
+    console.log('Arg')    
+    console.log(new Uint8Array(value.buffer))
+    document.querySelector('#doorbell').disabled = false
+    // let decoder = new TextDecoder();
+    // console.log('Characteristic binary: ' + decoder.decode(value.toString()))
+
+    // console.log('> ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds() + ' Value is ' + value)
+  }
+
+  function start() {
+    gattCharacteristic.startNotifications()
+    .then(_ => {
+      console.log('Start reading...')
+      document.querySelector('#start').disabled = true
+      document.querySelector('#stop').disabled = false
+    })
+    .catch(error => {
+      console.log('[ERROR] Start: ' + error)
+    })
+  }
+
+  function stop() {
+    gattCharacteristic.stopNotifications()
+    .then(_ => {
+      console.log('Stop reading...')
+      document.querySelector('#start').disabled = false
+      document.querySelector('#stop').disabled = true
+    })
+    .catch(error => {
+      console.log('[ERROR] Stop: ' + error)
+    })
+  }
+
+  function doorbell() {
+    console.log ('Doorbell ringing...');
+    return (bluetoothDeviceDetected ? Promise.resolve() : getDeviceInfo())
+    .then(connectWriteableGATT)
+    .then(_ => {
+      console.log('Writing gattWriteableCharacteristic ...') 
+      const doorbell = new Uint8Array([0x99, 0x00, 0x19]).buffer;
+      gattWriteableCharacteristic.writeValue(doorbell)
+    })
+    .catch(error => {
+      console.log('Error writing to gattWriteableCharacteristic: ' + error)
+    })
+    // const doorbell = Uint8Array.of(1);
+  }
+  
+</script>
